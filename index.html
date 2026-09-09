@@ -97,13 +97,16 @@ input.qty:focus{border-color:var(--red);outline:none;}
   <button type="button" class="btn" onclick="location.reload()">New order</button>
 </div></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
 /* ============================================================================
-   EMAIL SETUP — paste your Web3Forms Access Key on the next line.
-   Get it free in 30 seconds at https://web3forms.com  (enter info@onlyifyouknow.com;
-   they email you the key). Orders are delivered to that address.
+   EMAIL SETUP — paste your 3 EmailJS values below (see instructions).
+   Free at https://emailjs.com. One submit emails the FULL order to the
+   customer AND (as Bcc) to info@onlyifyouknow.com.
    ============================================================================ */
-const WEB3FORMS_ACCESS_KEY = "a42e2a63-5788-4864-b1e3-ad41568fa14a";
+const EMAILJS_PUBLIC_KEY  = "NMu_r7Bgf0xL30VW6";
+const EMAILJS_SERVICE_ID  = "service_uax2e1h";
+const EMAILJS_TEMPLATE_ID = "template_cc5yyrn";
 const INFO_EMAIL = "info@onlyifyouknow.com";
 /* ========================================================================== */
 
@@ -151,33 +154,27 @@ document.getElementById('submitBtn').addEventListener('click',async()=>{
   if(lines.length===0){alert("Please enter a quantity (in dozens) for at least one item.");return;}
   const summary=lines.join("\n");
   const cust=gv('customer_email');
-  const payload={
-    access_key:WEB3FORMS_ACCESS_KEY,
-    subject:"RF Wholesale Order — "+(gv('business_name')||gv('buyer_name')||'New order'),
-    from_name:"Retro Forever Order Form",
-    email:cust, replyto:cust,
-    "Business name":gv('business_name'), "Buyer name":gv('buyer_name'),
-    "Customer email":cust, "Phone":gv('phone'), "Ship-to address":gv('ship_to'),
-    "Resale / tax ID":gv('tax_id'), "PO number":gv('po_number'),
-    "Requested ship date":gv('ship_date'), "Form of payment":gv('payment'),
-    "Show / source":gv('show_source'), "Order taken by":gv('order_by'),
-    "TOTAL DOZEN":totalDz, "ORDER TOTAL":money(totalVal),
-    "ORDER":summary, "Submitted":new Date().toLocaleString()
+  const params={
+    customer_email:cust, info_email:INFO_EMAIL,
+    business_name:gv('business_name'), buyer_name:gv('buyer_name'),
+    phone:gv('phone'), ship_to:gv('ship_to'), tax_id:gv('tax_id'),
+    po_number:gv('po_number'), ship_date:gv('ship_date'), payment:gv('payment'),
+    show_source:gv('show_source'), order_by:gv('order_by'),
+    total_dozen:totalDz, grand_total:money(totalVal),
+    order_summary:summary, order_date:new Date().toLocaleString()
   };
   const btn=document.getElementById('submitBtn'); btn.disabled=true; btn.textContent="Sending…";
   const overlay=document.getElementById('overlay');
   let ok=false;
-  if(!WEB3FORMS_ACCESS_KEY.startsWith("YOUR_")){
+  if(!EMAILJS_PUBLIC_KEY.startsWith("YOUR_")){
     try{
-      const res=await fetch("https://api.web3forms.com/submit",{
-        method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},
-        body:JSON.stringify(payload)});
-      ok=((await res.json()).success===true);
+      await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,params,{publicKey:EMAILJS_PUBLIC_KEY});
+      ok=true;
     }catch(e){ok=false;}
   }
   if(ok){
     document.getElementById('mTitle').textContent="Order submitted ✓";
-    document.getElementById('mBody').innerHTML=`Thanks, ${gv('buyer_name')||''}! Your order was sent to the Retro Forever team. Order total: <b>${money(totalVal)}</b> (${totalDz} dozen).<br><br>Please use <b>Print / save my copy</b> below for your records.`;
+    document.getElementById('mBody').innerHTML=`Thanks, ${gv('buyer_name')||''}! A copy has been emailed to <b>${cust}</b> and to the Retro Forever team. Order total: <b>${money(totalVal)}</b> (${totalDz} dozen).<br><br>You can also <b>Print / save my copy</b> below.`;
   }else{
     document.getElementById('mTitle').textContent="Your order is ready";
     document.getElementById('mBody').innerHTML=`Order total: <b>${money(totalVal)}</b> (${totalDz} dozen).<br><br>Email isn't connected yet — please <b>Print / save your copy</b> below and email it to ${INFO_EMAIL}.`;
