@@ -116,7 +116,27 @@ input.qty:focus{border-color:var(--red);outline:none;}
 #modal h2{color:var(--red-deep);margin:0 0 8px;}
 footer{text-align:center;padding:34px 22px 92px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);}
 footer a{color:var(--red-deep);font-weight:600;}
-@media print{.nav,.searchbar,.bar,#order .hint{display:none;}thead th{position:static;}}
+.mobcue{display:none;}
+/* mobile: stack each order row as a card so Qty + totals are always visible (desktop unchanged) */
+@media(max-width:640px){
+  .mobcue{display:block;font-size:12.5px;color:var(--red-deep);font-weight:700;margin:0 0 10px 2px;}
+  .tablewrap{overflow:visible;border:none;border-radius:0;background:transparent;}
+  table{min-width:0;}
+  thead{display:none;}
+  table,tbody,tr,td{display:block;width:100%;}
+  tbody tr{border:1px solid var(--line);border-radius:10px;background:#fff!important;margin:0 0 12px;padding:8px 12px;}
+  tbody td{border:none;padding:5px 0;font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:14px;text-align:right;}
+  tbody td::before{content:attr(data-label);font-weight:700;color:var(--muted);font-size:11px;letter-spacing:.03em;text-transform:uppercase;text-align:left;}
+  tbody td.num{display:none;}
+  tbody td.style{font-weight:600;font-size:15px;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:2px;}
+  tbody td.style::before{content:"";}
+  tbody td.sku::before{color:var(--red);}
+  tbody td.c{background:var(--cream);border-radius:8px;padding:8px 10px;margin-top:4px;}
+  tbody td.c::before{color:var(--red-deep);font-size:12px;}
+  input.qty{width:96px;padding:9px;font-size:16px;}
+  tbody td.lt{font-size:15px;}
+}
+@media print{.nav,.searchbar,.bar,#order .hint,.mobcue{display:none;}thead th{position:static;}}
 </style></head>
 <body>
 
@@ -232,9 +252,9 @@ footer a{color:var(--red-deep);font-weight:600;}
       <span class="rl">Open PDF →</span></a>
     <a class="rcard" href="https://drive.google.com/file/d/13lI0zf1j4X2T5pOwFXdm3TsmS9ml-Fbf/view" target="_blank" rel="noopener">
       <div class="rt">Top Styles</div>
-      <div class="rd">Our best-selling styles, print-ready for quick reference.</div>
+      <div class="rd">Selected high runners, print-ready for quick reference.</div>
       <span class="rl">Open PDF →</span></a>
-    <a class="rcard" href="https://drive.google.com/file/d/1DFZ9Zhs_ilQg6Ubc2aH3Z0iFU_QwDA6N/view" target="_blank" rel="noopener">
+    <a class="rcard" href="https://drive.google.com/file/d/11q7fCugNwzS84P4I26TteOi9VUPCY2k3/view" target="_blank" rel="noopener">
       <div class="rt">Brand Proof Pack</div>
       <div class="rd">Brand overview and product imagery for buyers and merchandisers.</div>
       <span class="rl">Open PDF →</span></a>
@@ -269,6 +289,7 @@ footer a{color:var(--red-deep);font-weight:600;}
 
     <div class="searchbar"><input type="text" id="filter" placeholder="&#128269;  Search 340+ styles by SKU, item, or color…"></div>
     <p class="hint">All styles sold by the dozen. Enter the number of dozens in the Qty column; line and order totals update automatically.</p>
+    <p class="mobcue">↓ Each style is a card below — enter dozens in its Qty box.</p>
 
     <div class="tablewrap">
       <table>
@@ -316,10 +337,10 @@ const tbody=document.getElementById('tbody');
 PRODUCTS.forEach((p,i)=>{
   const tr=document.createElement('tr');
   tr.dataset.search=(p.sku+" "+p.name+" "+p.color+" "+p.cat).toLowerCase();
-  tr.innerHTML=`<td>${i+1}</td><td class="sku">${p.sku}</td><td>${p.name}</td><td>${p.color}</td>
-    <td class="cat">${p.cat}</td><td class="r">${money(p.pc)}</td><td class="r">${money(p.dz)}</td>
-    <td class="c"><input class="qty" type="number" min="0" step="1" inputmode="numeric" data-i="${i}"></td>
-    <td class="lt" data-lt="${i}">—</td>`;
+  tr.innerHTML=`<td class="num">${i+1}</td><td class="sku" data-label="SKU">${p.sku}</td><td class="style" data-label="Style">${p.name}</td><td data-label="Color">${p.color}</td>
+    <td class="cat" data-label="Category">${p.cat}</td><td class="r" data-label="WS / pc">${money(p.pc)}</td><td class="r" data-label="WS / dozen">${money(p.dz)}</td>
+    <td class="c" data-label="Qty (dozen)"><input class="qty" type="number" min="0" step="1" inputmode="numeric" data-i="${i}"></td>
+    <td class="lt" data-label="Line total" data-lt="${i}">—</td>`;
   tbody.appendChild(tr);
 });
 let totalDz=0,totalVal=0;
