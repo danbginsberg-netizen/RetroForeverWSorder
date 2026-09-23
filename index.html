@@ -232,7 +232,7 @@ footer a{color:var(--red-deep);font-weight:600;}
   <div class="terms">
     <div class="trow"><div class="k">Pricing</div><div class="v">Open price. Styles run roughly $3–$12 per piece, sold by the dozen.</div></div>
     <div class="trow"><div class="k">Suggested retail</div><div class="v">Keystone-plus — a 3.2–3.5× markup over wholesale.</div></div>
-    <div class="trow"><div class="k">Minimum order qty</div><div class="v">One dozen per style on reorder. New doors may open at 6 pieces per style.</div></div>
+    <div class="trow"><div class="k">Minimum order qty</div><div class="v">Six pieces per style on an account’s first order, a dozen on reorder &mdash; same price per piece either way.</div></div>
     <div class="trow"><div class="k">New customers</div><div class="v">$100 minimum on a first order.</div></div>
     <div class="trow"><div class="k">Availability</div><div class="v">In-stock. 200+ styles held at our U.S. warehouse.</div></div>
     <div class="trow"><div class="k">Reorders</div><div class="v">Fast — shipped from inventory on hand, no long lead times.</div></div>
@@ -288,14 +288,14 @@ footer a{color:var(--red-deep);font-weight:600;}
     </fieldset>
 
     <div class="searchbar"><input type="text" id="filter" placeholder="&#128269;  Search 350+ styles by SKU, item, or color…"></div>
-    <p class="hint">Priced and ordered by the dozen &mdash; enter the number of dozens in the Qty column; line and order totals update automatically. Opening orders for a new door can be written at 6 pieces per style: ask your showroom, or email dan@retroforeverllc.com and we will adjust the order.</p>
+    <p class="hint">Six pieces per style on an account’s first order, a dozen on reorder, $100 minimum &mdash; same price per piece either way. Enter dozens in the Qty column and use <b>0.5</b> for a six-piece opener; line and order totals update automatically.</p>
     <p class="mobcue">↓ Each style is a card below — enter dozens in its Qty box.</p>
 
     <div class="tablewrap">
       <table>
         <thead><tr>
           <th style="width:30px">#</th><th>SKU</th><th>Item</th><th>Color</th><th>Category</th>
-          <th class="r">WS / pc</th><th class="r">WS / dozen</th><th class="c">Qty (dz)</th><th class="r">Line total</th>
+          <th class="r">WS / pc</th><th class="r">WS / dozen</th><th class="c">Qty (dz)<br><span style="font-weight:400;font-size:10.5px;opacity:.75">0.5 = 6 pcs</span></th><th class="r">Line total</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
       </table>
@@ -339,7 +339,7 @@ PRODUCTS.forEach((p,i)=>{
   tr.dataset.search=(p.sku+" "+p.name+" "+p.color+" "+p.cat).toLowerCase();
   tr.innerHTML=`<td class="num">${i+1}</td><td class="sku" data-label="SKU">${p.sku}</td><td class="style" data-label="Style">${p.name}</td><td data-label="Color">${p.color}</td>
     <td class="cat" data-label="Category">${p.cat}</td><td class="r" data-label="WS / pc">${money(p.pc)}</td><td class="r" data-label="WS / dozen">${money(p.dz)}</td>
-    <td class="c" data-label="Qty (dozen)"><input class="qty" type="number" min="0" step="1" inputmode="numeric" data-i="${i}"></td>
+    <td class="c" data-label="Qty (dz) — 0.5 = 6 pcs"><input class="qty" type="number" min="0" step="0.5" inputmode="decimal" data-i="${i}"></td>
     <td class="lt" data-label="Line total" data-lt="${i}">—</td>`;
   tbody.appendChild(tr);
 });
@@ -347,7 +347,7 @@ let totalDz=0,totalVal=0;
 function recalc(){
   totalDz=0;totalVal=0;
   document.querySelectorAll('input.qty').forEach(inp=>{
-    const i=+inp.dataset.i,q=parseInt(inp.value)||0,lt=q*PRODUCTS[i].dz;
+    const i=+inp.dataset.i,q=Math.max(0,Math.round((parseFloat(inp.value)||0)*2)/2),lt=q*PRODUCTS[i].dz;
     document.querySelector(`[data-lt="${i}"]`).textContent=q>0?money(lt):"—";
     totalDz+=q; totalVal+=lt;
   });
