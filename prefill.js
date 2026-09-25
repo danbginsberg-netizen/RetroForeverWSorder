@@ -32,5 +32,8 @@
     " Review the quantities, add your details and submit.";
   var table = tbody.closest("table");
   table.parentNode.insertBefore(note, table);
-  setTimeout(function () { note.scrollIntoView({ behavior: "smooth", block: "center" }); }, 300);
+  // take the buyer to their styles; repeat once images above have loaded and moved the page
+  function go() { note.scrollIntoView({ block: "center" }); }
+  if (document.readyState === "complete") setTimeout(go, 200); else window.addEventListener("load", function () { setTimeout(go, 200); });
+  setTimeout(go, 1500);
 })();
