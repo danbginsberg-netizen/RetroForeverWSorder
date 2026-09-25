@@ -37,7 +37,3 @@
   if (document.readyState === "complete") setTimeout(go, 200); else window.addEventListener("load", function () { setTimeout(go, 200); });
   setTimeout(go, 1500);
 })();
-
-  if (document.readyState === "complete") setTimeout(go, 200); else window.addEventListener("load", function () { setTimeout(go, 200); });
-  setTimeout(go, 1500);
-})();
