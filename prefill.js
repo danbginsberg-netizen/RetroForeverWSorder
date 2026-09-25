@@ -33,7 +33,11 @@
   var table = tbody.closest("table");
   table.parentNode.insertBefore(note, table);
   // take the buyer to their styles; repeat once images above have loaded and moved the page
-  function go() { note.scrollIntoView({ block: "center" }); }
+  function go() { note.scrollIntoView({ block: "center", behavior: "instant" }); }
+  if (document.readyState === "complete") setTimeout(go, 200); else window.addEventListener("load", function () { setTimeout(go, 200); });
+  setTimeout(go, 1500);
+})();
+
   if (document.readyState === "complete") setTimeout(go, 200); else window.addEventListener("load", function () { setTimeout(go, 200); });
   setTimeout(go, 1500);
 })();
