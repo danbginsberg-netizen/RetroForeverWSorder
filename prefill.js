@@ -37,3 +37,27 @@
   if (document.readyState === "complete") setTimeout(go, 200); else window.addEventListener("load", function () { setTimeout(go, 200); });
   setTimeout(go, 1500);
 })();
+
+/* Rep code and capsule ID (Capsule Builder v1.6.0): &rep=CODE&cap=ID on a capsule's order link credit the order to the
+   rep. Both go into "Order taken by" and onto the emailed order summary; the buyer sees a short note. Works with or
+   without ?cart=. Codes are letters, numbers and dashes only. */
+(function () {
+  var p = new URLSearchParams(location.search);
+  var clean = function (v, n) { v = String(v || "").trim().slice(0, n); return /^[A-Za-z0-9-]+$/.test(v) ? v : ""; };
+  var rep = clean(p.get("rep"), 20).toUpperCase(), cap = clean(p.get("cap"), 24);
+  if (!rep && !cap) return;
+  var tag = [rep ? "Rep code " + rep : "", cap ? "Capsule " + cap : ""].filter(Boolean).join(" · ");
+  var ob = document.getElementById("order_by");
+  if (ob && rep) { var o = document.createElement("option"); o.textContent = "Rep code " + rep; ob.appendChild(o); ob.value = o.value; }
+  if (typeof buildSummary === "function") {
+    var orig = buildSummary;
+    buildSummary = function () { var l = orig.apply(this, arguments); if (l && l.length) l.push("Credited to: " + tag); return l; };
+  }
+  var bn = document.getElementById("business_name"), fs = bn && bn.closest("fieldset");
+  if (fs) {
+    var n = document.createElement("div");
+    n.style.cssText = "margin:10px 0 0;padding:8px 12px;border:1px dashed #b8a9d9;border-radius:8px;font-size:13px;color:#5b4a8b";
+    n.textContent = (rep ? "This order will be credited to your sales rep (code " + rep + ")." : "This order came from a curated capsule.") + (cap ? " Capsule reference " + cap + "." : "");
+    fs.appendChild(n);
+  }
+})();
