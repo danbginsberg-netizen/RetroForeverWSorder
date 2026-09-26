@@ -232,7 +232,7 @@ footer a{color:var(--red-deep);font-weight:600;}
   <div class="terms">
     <div class="trow"><div class="k">Pricing</div><div class="v">Open price. Styles run roughly $3–$12 per piece, sold by the dozen.</div></div>
     <div class="trow"><div class="k">Suggested retail</div><div class="v">Keystone-plus — a 3.2–3.5× markup over wholesale.</div></div>
-    <div class="trow"><div class="k">Minimum order qty</div><div class="v">Six pieces per style on an account’s first order, a dozen on reorder &mdash; same price per piece either way.</div></div>
+    <div class="trow"><div class="k">Quantities</div><div class="v">Sold by the dozen. First orders may include a limited number of ½-dozen styles &mdash; same price per piece either way.</div></div>
     <div class="trow"><div class="k">Minimum order</div><div class="v">$100 on a first order.</div></div>
     <div class="trow"><div class="k">Payment</div><div class="v">Credit card, ACH, check or wire transfer. Credit cards add 3%; wires add $20.</div></div>
     <div class="trow"><div class="k">Availability</div><div class="v">In-stock. 200+ styles held at our U.S. warehouse.</div></div>
@@ -289,7 +289,7 @@ footer a{color:var(--red-deep);font-weight:600;}
     </fieldset>
 
     <div class="searchbar"><input type="text" id="filter" placeholder="&#128269;  Search 350+ styles by SKU, item, or color…"></div>
-    <p class="hint">Six pieces per style on an account’s first order, a dozen on reorder, $100 minimum &mdash; same price per piece either way. Enter dozens in the Qty column and use <b>0.5</b> for a six-piece opener; line and order totals update automatically.</p>
+    <p class="hint">Sold by the dozen, $100 minimum on a first order. First orders may include a limited number of ½-dozen styles (enter <b>0.5</b>); reorders are by the dozen. Same price per piece either way. Enter dozens in the Qty column; line and order totals update automatically.</p>
     <p class="mobcue">↓ Each style is a card below — enter dozens in its Qty box.</p>
 
     <div class="tablewrap">
@@ -344,7 +344,7 @@ PRODUCTS.forEach((p,i)=>{
     <td class="lt" data-label="Line total" data-lt="${i}">—</td>`;
   tbody.appendChild(tr);
 });
-// Quantity in dozens, rounded to the nearest half dozen. Half dozens are allowed on every style (six-piece first-order minimum).
+// Quantity in dozens, rounded to the nearest half dozen. Sold by the dozen; a first order may include a few half-dozen styles (0.5).
 function qtyOf(inp){return Math.max(0,Math.round((parseFloat(inp.value)||0)*2)/2);}
 let totalDz=0,totalVal=0;
 function recalc(){
